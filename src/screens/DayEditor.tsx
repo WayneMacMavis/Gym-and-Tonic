@@ -1,54 +1,168 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { usePrograms } from '../context/ProgramContext';
+import type { Program } from '../context/ProgramContext';
+import { getSuggestionsForWorkoutName } from '../utils/getSuggestions';
 import './DayEditor.scss';
 
 export default function DayEditor() {
   const { id, week, day } = useParams();
   const navigate = useNavigate();
+  const { programs, updateProgram } = usePrograms();
 
-  const [workoutName, setWorkoutName] = useState('');
-  const [exercises, setExercises] = useState<string[]>([]);
-  const [newExercise, setNewExercise] = useState('');
+  const program = programs.find((p) => p.id === id);
+  if (!program) {
+    return (
+      <div className="card day-editor">
+        <h1>Program not found</h1>
+        <button className="btn secondary" onClick={() => navigate('/build')}>
+          ← Back to Build
+        </button>
+      </div>
+    );
+  }
 
-  const addExercise = () => {
-    if (!newExercise.trim()) return;
-    setExercises([...exercises, newExercise.trim()]);
-    setNewExercise('');
+  // Params are 1-based in your routes; convert to 0-based for arrays
+  const wIdx = week ? parseInt(week, 10) - 1 : 0;
+  const dIdx = day ? parseInt(day, 10) - 1 : 0;
+  const theWeek = program.weeks[wIdx];
+  const theDay = theWeek?.days[dIdx];
+
+  if (!theWeek || !theDay) {
+    return (
+      <div className="card day-editor">
+        <h1>Invalid week/day</h1>
+        <button className="btn secondary" onClick={() => navigate(`/program/${program.id}`)}>
+          ← Back to Program
+        </button>
+      </div>
+    );
+  }
+
+  const setWorkoutName = (name: string) => {
+    const updatedWeeks = [...program.weeks];
+    updatedWeeks[wIdx].days[dIdx] = { ...theDay, workoutName: name };
+    const updated: Program = { ...program, weeks: updatedWeeks };
+    updateProgram(updated);
   };
+
+  const addExercise = (exercise: string) => {
+    const trimmed = exercise.trim();
+    if (!trimmed) return;
+    const updatedWeeks = [...program.weeks];
+    updatedWeeks[wIdx].days[dIdx] = {
+      ...theDay,
+      exercises: [...theDay.exercises, trimmed],
+    };
+    const updated: Program = { ...program, weeks: updatedWeeks };
+    updateProgram(updated);
+  };
+
+  const removeExercise = (idx: number) => {
+    const updatedWeeks = [...program.weeks];
+    updatedWeeks[wIdx].days[dIdx] = {
+      ...theDay,
+      exercises: theDay.exercises.filter((_, i) => i !== idx),
+    };
+    const updated: Program = { ...program, weeks: updatedWeeks };
+    updateProgram(updated);
+  };
+
+  // Smart suggestions based on your workoutName (e.g., "Chest, Trisep, Back, Bisep")
+  const suggestions = getSuggestionsForWorkoutName(theDay.workoutName ?? '');
 
   return (
     <div className="card day-editor">
-      <h1>Week {week}, Day {day}</h1>
+      <h1>📅 {theDay.name} — Week {wIdx + 1}, Day {dIdx + 1}</h1>
 
       {/* Workout name */}
-      <input
-        type="text"
-        value={workoutName}
-        onChange={(e) => setWorkoutName(e.target.value)}
-        placeholder="Workout name"
-      />
-
-      {/* Add exercise */}
-      <div className="exercise-form">
+      <section className="workout-name">
+        <label>Workout name</label>
         <input
           type="text"
-          value={newExercise}
-          onChange={(e) => setNewExercise(e.target.value)}
-          placeholder="Exercise name"
+          value={theDay.workoutName ?? ''}
+          onChange={(e) => setWorkoutName(e.target.value)}
+          placeholder="e.g. Chest, Trisep, Back, Bisep"
         />
-        <button className="btn primary" onClick={addExercise}>➕ Add Exercise</button>
-      </div>
+      </section>
+
+      {/* Add exercise */}
+      <section className="exercise-form">
+        <label>New exercise</label>
+        <div className="row">
+          <input
+            type="text"
+            placeholder="e.g. Bench Press"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') addExercise((e.target as HTMLInputElement).value);
+            }}
+          />
+          <button
+            className="btn primary"
+            onClick={() => {
+              const input = document.querySelector<HTMLInputElement>('.exercise-form input');
+              if (input) {
+                addExercise(input.value);
+                input.value = '';
+              }
+            }}
+          >
+            ➕ Add
+          </button>
+        </div>
+      </section>
 
       {/* Exercise list */}
-      <ul>
-        {exercises.map((ex, idx) => (
-          <li key={idx}>{ex}</li>
-        ))}
-      </ul>
+      <section className="exercise-list">
+        <h2>Exercises</h2>
+        {theDay.exercises.length > 0 ? (
+          <ul>
+            {theDay.exercises.map((ex, idx) => (
+              <li key={idx}>
+                <span>{ex}</span>
+                <button className="btn secondary small" onClick={() => removeExercise(idx)}>
+                  ❌ Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="muted">No exercises yet</p>
+        )}
+      </section>
+
+      {/* Suggested exercises (name + muscle image + tutorial + add) */}
+      {suggestions.length > 0 && (
+        <section className="exercise-suggestions">
+          <h2>Suggested exercises</h2>
+          <ul>
+            {suggestions.map((ex) => (
+              <li key={ex.name}>
+                <div className="exercise-card">
+                  <strong>{ex.name}</strong>
+                  <img
+                    src={ex.musclesImage}
+                    alt={`${ex.category} muscles`}
+                    className="muscle-image"
+                  />
+                  <a href={ex.videoUrl} target="_blank" rel="noopener noreferrer">
+                    ▶️ Tutorial
+                  </a>
+                  <button
+                    className="btn secondary small"
+                    onClick={() => addExercise(ex.name)}
+                  >
+                    ➕ Add
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Back button */}
       <footer className="actions-row">
-        <button className="btn secondary" onClick={() => navigate(`/program/${id}`)}>
+        <button className="btn secondary" onClick={() => navigate(`/program/${program.id}`)}>
           ← Back to Program
         </button>
       </footer>

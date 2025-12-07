@@ -1,14 +1,15 @@
 import { useNavigate } from 'react-router-dom';
+import { usePrograms } from '../context/ProgramContext';
 import './Build.scss';
 
 export default function Build() {
   const navigate = useNavigate();
+  const { programs, addProgram, removeProgram } = usePrograms();
 
-  // Temporary mock programs — later you can replace with state or persistence
-  const programs = [
-    { id: '1', name: 'Push/Pull/Legs', weeks: 6 },
-    { id: '2', name: 'Full Body Strength', weeks: 4 },
-  ];
+  const createProgram = () => {
+    const newProgram = addProgram();
+    navigate(`/program/${newProgram.id}`);
+  };
 
   return (
     <div className="card build">
@@ -21,21 +22,35 @@ export default function Build() {
       <section className="build-actions">
         <h2>Actions</h2>
         <div className="actions">
-          <button className="btn primary" onClick={() => navigate('/program/new')}>
+          <button className="btn primary" onClick={createProgram}>
             ➕ New Program
           </button>
         </div>
       </section>
 
-      {/* Program list */}
+      {/* Program list with summary + delete */}
       <section className="program-list">
         <h2>My Programs</h2>
         {programs.length > 0 ? (
           <ul>
             {programs.map((program) => (
-              <li key={program.id} onClick={() => navigate(`/program/${program.id}`)}>
-                <span>{program.name}</span>
-                <small>{program.weeks} weeks</small>
+              <li key={program.id}>
+                <div
+                  className="program-summary"
+                  onClick={() => navigate(`/program/${program.id}`)}
+                >
+                  <strong>{program.name}</strong>
+                  <small>{program.weeks.length} week(s)</small>
+                </div>
+                <button
+                  className="btn danger small"
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent navigation
+                    removeProgram(program.id);
+                  }}
+                >
+                  ❌ Delete
+                </button>
               </li>
             ))}
           </ul>

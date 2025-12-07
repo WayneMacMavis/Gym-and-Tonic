@@ -1,61 +1,103 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import './ProgramEditor.scss';
+import { useNavigate, useParams } from "react-router-dom";
+import { usePrograms } from "../context/ProgramContext";
+import type { Program } from "../context/ProgramContext";
+import { getSuggestionsForWorkoutName } from "../utils/getSuggestions";
+import "./ProgramEditor.scss";
 
 export default function ProgramEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { programs, updateProgram } = usePrograms();
 
-  const [programName, setProgramName] = useState(id === 'new' ? '' : 'Sample Program');
-  const [weeks, setWeeks] = useState([{ week: 1, days: [] as string[] }]);
+  const program = programs.find((p) => p.id === id);
+  if (!program) {
+    return (
+      <div className="program-editor card">
+        <h1>Program not found</h1>
+        <button className="btn secondary" onClick={() => navigate("/build")}>
+          ← Back to Build
+        </button>
+      </div>
+    );
+  }
 
-  const addWeek = () => setWeeks([...weeks, { week: weeks.length + 1, days: [] }]);
-  const addDay = (wIdx: number) => {
-    const next = [...weeks];
-    next[wIdx].days.push(`Day ${next[wIdx].days.length + 1}`);
-    setWeeks(next);
-  };
-
-  const saveProgram = () => {
-    // For now just log — later hook into localStorage or backend
-    console.log('Program saved:', { programName, weeks });
+  const setProgramName = (name: string) => {
+    const updated: Program = { ...program, name };
+    updateProgram(updated);
   };
 
   return (
-    <div className="card program-editor">
-      <h1>📘 Program Editor</h1>
-      <input
-        type="text"
-        value={programName}
-        onChange={(e) => setProgramName(e.target.value)}
-        placeholder="Program name"
-      />
+    <div className="program-editor card">
+      <header>
+        <h1>{program.name}</h1>
+        <input
+          type="text"
+          value={program.name}
+          onChange={(e) => setProgramName(e.target.value)}
+          placeholder="Program name"
+        />
+      </header>
 
-      {weeks.map((wk, wIdx) => (
-        <div key={wk.week} className="week">
-          <h2>Week {wk.week}</h2>
-          <button className="btn secondary" onClick={() => addDay(wIdx)}>➕ Add Day</button>
-          <ul>
-            {wk.days.map((day, dIdx) => (
-              <li key={dIdx}>
-                {day}
-                <button
-                  className="btn primary"
-                  onClick={() => navigate(`/program/${id}/week/${wk.week}/day/${dIdx + 1}`)}
-                >
-                  Edit
-                </button>
-              </li>
-            ))}
-          </ul>
+      {/* Weeks */}
+      {program.weeks.map((week, wIdx) => (
+        <div key={wIdx} className="week-card">
+          <h2>Week {week.week}</h2>
+          <div className="day-list">
+            {week.days.map((day, dIdx) => {
+              const suggestions = getSuggestionsForWorkoutName(day.workoutName ?? "");
+              return (
+                <div key={dIdx} className="day-item">
+                  <span>
+                    {day.name} — {day.workoutName || "Untitled"}
+                  </span>
+                  <button
+                    className="btn secondary small"
+                    onClick={() =>
+                      navigate(`/day/${program.id}/${wIdx + 1}/${dIdx + 1}`)
+                    }
+                  >
+                    ✏️ Edit
+                  </button>
+
+                  {/* Suggestions preview */}
+                  {suggestions.length > 0 && (
+                    <div className="suggestions-preview">
+                      <h3>Suggested Exercises</h3>
+                      <ul>
+                        {suggestions.slice(0, 4).map((ex) => (
+                          <li key={ex.name}>
+                            <div className="exercise-card">
+                              <strong>{ex.name}</strong>
+                              <img
+                                src={ex.musclesImage}
+                                alt={`${ex.category} muscles`}
+                                className="muscle-image"
+                              />
+                              <a
+                                href={ex.videoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                ▶️ Tutorial
+                              </a>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       ))}
 
-      <div className="actions-row">
-        <button className="btn primary" onClick={addWeek}>➕ Add Week</button>
-        <button className="btn primary" onClick={saveProgram}>💾 Save Program</button>
-        <button className="btn secondary" onClick={() => navigate('/build')}>← Back to Build</button>
-      </div>
+      <footer className="actions-row">
+        <button className="btn secondary" onClick={() => navigate("/build")}>
+          ← Back to Build
+        </button>
+      </footer>
     </div>
   );
 }

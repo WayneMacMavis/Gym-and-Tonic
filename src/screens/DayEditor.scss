@@ -8,7 +8,24 @@
   gap: 1.5rem;
 }
 
+/* Workout name input */
+.workout-name input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #666;
+  background: transparent;
+  color: inherit;
+}
+
+/* Exercise form */
 .exercise-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.exercise-form .row {
   display: flex;
   gap: 0.5rem;
 }
@@ -22,6 +39,7 @@
   color: inherit;
 }
 
+/* Lists */
 .day-editor ul {
   list-style: none;
   padding: 0;
@@ -32,8 +50,52 @@
   border: 1px solid #444;
   border-radius: 6px;
   margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+/* Exercise suggestions */
+.exercise-suggestions {
+  margin-top: 1rem;
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.exercise-suggestions h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.exercise-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.exercise-card strong {
+  flex: 1;
+}
+
+.exercise-card img.muscle-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.exercise-card a {
+  color: #4da3ff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.exercise-card a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons */
 .btn {
   padding: 0.8rem 1.2rem;
   border-radius: 8px;
@@ -57,4 +119,20 @@
 .btn.secondary.small {
   padding: 0.35rem 0.6rem;
   font-size: 0.8rem;
+}
+
+.btn.danger {
+  background: linear-gradient(135deg, #dc3545, #a71d2a);
+  color: #fff;
+}
+.btn.danger:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+/* Footer actions */
+.actions-row {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
 }
