@@ -1,0 +1,41 @@
+/* Color palette */
+$color-bg: #0b0b0f;          // near-black background
+$color-surface: #141420;     // dark surface for cards/nav
+$color-primary: #7c3aed;     // purple accent
+$color-primary-700: #6d28d9; // darker purple for active/pressed states
+$color-text: #e6e6f0;        // main text color
+$color-muted: #9aa0b4;       // muted text for secondary info
+$color-success: #22c55e;     // green for success/progress
+$color-danger: #ef4444;      // red for errors/warnings
+
+/* Border radius */
+$radius-sm: 8px;
+$radius-md: 14px;
+$radius-lg: 20px;
+
+/* Spacing scale */
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+
+/* Shadows */
+$shadow-sm: 0 2px 8px rgba(0,0,0,0.35);
+$shadow-md: 0 6px 24px rgba(0,0,0,0.35);
+$shadow-lg: 0 12px 32px rgba(0,0,0,0.45);
+
+/* Typography */
+$font-family-base: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+$font-size-sm: 0.875rem; // 14px
+$font-size-md: 1rem;     // 16px
+$font-size-lg: 1.25rem;  // 20px
+$font-size-xl: 1.5rem;   // 24px
+
+/* Breakpoints (mobile-first) */
+$bp-sm: 480px;   // small phones
+$bp-md: 640px;   // tablets
+$bp-lg: 1024px;  // desktops
+$bp-xl: 1280px;  // large screens

@@ -1,0 +1,40 @@
+@use '../styles/tokens' as *;
+
+.session {
+  padding: $space-4;
+
+  h1 {
+    font-size: $font-size-lg;
+    margin-bottom: $space-3;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: $space-3;
+    }
+  }
+
+  .sets {
+    margin-top: $space-2;
+  }
+
+  .setRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-2;
+    border: 1px solid $color-muted;
+    border-radius: $radius-sm;
+    margin-top: $space-2;
+  }
+
+  .done {
+   background: $color-success;
+  text-decoration: line-through;
+
+}
+}

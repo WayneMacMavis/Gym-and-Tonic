@@ -1,0 +1,40 @@
+@use '../styles/tokens' as *;
+
+.history {
+  padding: $space-4;
+
+  h1 {
+    font-size: $font-size-lg;
+    margin-bottom: $space-3;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: $space-3;
+    }
+  }
+
+  .meta {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin-top: $space-1;
+  }
+
+  .sets {
+    margin-top: $space-2;
+
+    ul {
+      list-style: none;
+      padding-left: $space-3;
+    }
+  }
+
+  .done {
+    color: $color-success;
+    font-weight: bold;
+  }
+}
