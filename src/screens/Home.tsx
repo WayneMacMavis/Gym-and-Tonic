@@ -1,85 +1,106 @@
-import { useNavigate } from 'react-router-dom';
-import InstallButton from '../components/InstallButton';
-import './Home.scss';
+// src/pages/Home.tsx
+import React, { useEffect, useState } from "react";
+import "./Home.scss";
 
-export default function Home() {
-  const navigate = useNavigate();
+const Home: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
 
-  const recentRoutines = [
-    { id: 1, name: 'Push Day', lastDone: '2025-12-05' },
-    { id: 2, name: 'Legs & Core', lastDone: '2025-12-03' },
-  ];
+  useEffect(() => {
+    // Trigger animations once after mount
+    const timer = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="card home">
-      {/* Welcome header */}
-      <header className="home-header">
-        <h1>🏋️ GymApp</h1>
-        <p>Your fitness companion — track, build, and crush your goals.</p>
-      </header>
+    <div className={`home ${mounted ? "home--mounted" : ""}`}>
+      <main className="home__main">
+        {/* Hero Section */}
+        <section className="home__hero">
+          <h2>Welcome Back!</h2>
+          <p>Track your progress and plan your next workout.</p>
+          <button className="btn--primary">Start Workout</button>
+        </section>
 
-      {/* Quick actions */}
-      <section className="quick-actions">
-        <h2>Quick Actions</h2>
-        <div className="actions">
-          <button className="btn primary" onClick={() => navigate('/build')}>
-            ➕ Build Routine
-          </button>
-          <button className="btn secondary" onClick={() => navigate('/train')}>
-            ▶️ Start Session
-          </button>
-        </div>
-      </section>
+        {/* Streak Badge */}
+        <section className="home__streak">
+          <span className="streak-badge">🔥 7‑Day Streak</span>
+        </section>
 
-      {/* Recent routines */}
-      <section className="recent-routines">
-        <h2>Recent Routines</h2>
-        {recentRoutines.length > 0 ? (
-          <ul>
-            {recentRoutines.map(routine => (
-              <li key={routine.id}>
-                <span>{routine.name}</span>
-                <small>Last done: {routine.lastDone}</small>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No routines yet. Start building one!</p>
-        )}
-      </section>
+        {/* Stats */}
+        <section className="home__stats">
+          <h3>Your Stats</h3>
+          <div className="stats-grid">
+            <div className="stat">
+              <span className="stat__label">Workouts</span>
+              <span className="stat__value">24</span>
+              <div className="progress">
+                <div className="progress__bar" style={{ width: "80%" }} />
+              </div>
+            </div>
+            <div className="stat">
+              <span className="stat__label">Calories</span>
+              <span className="stat__value">12,500</span>
+              <div className="progress">
+                <div className="progress__bar" style={{ width: "65%" }} />
+              </div>
+            </div>
+            <div className="stat">
+              <span className="stat__label">Minutes</span>
+              <span className="stat__value">1,200</span>
+              <div className="progress">
+                <div className="progress__bar" style={{ width: "50%" }} />
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* Stats snapshot */}
-      <section className="stats">
-        <h2>📊 Progress</h2>
-        <p>Last workout: Dec 5, 2025</p>
-        <p>Current streak: 3 days</p>
-      </section>
+        {/* Upcoming Workouts */}
+        <section className="home__upcoming">
+          <h3>Upcoming Workouts</h3>
+          <div className="upcoming-card">
+            <h4>Leg Day</h4>
+            <ul>
+              <li>Squats</li>
+              <li>Lunges</li>
+              <li>Deadlifts</li>
+            </ul>
+          </div>
+        </section>
 
-      {/* Motivation */}
-      <section className="motivation">
-        <h2>💡 Motivation</h2>
-        <p>"Consistency beats intensity. Show up every day."</p>
-      </section>
+        {/* Quote */}
+        <section className="home__quote">
+          <blockquote>
+            “Discipline is choosing between what you want now and what you want most.”
+          </blockquote>
+        </section>
 
-      {/* Upcoming session */}
-      <section className="upcoming">
-        <h2>Upcoming Session</h2>
-        <p>Monday — Pull Day (Week 3, Day 1)</p>
-      </section>
+        {/* Actions */}
+        <section className="home__actions">
+          <button className="btn--secondary">View Library</button>
+          <button className="btn--secondary">Add Workout</button>
+        </section>
 
-      {/* Progress bar */}
-      <section className="progress-bar">
-        <h2>Weekly Goal</h2>
-        <div className="bar">
-          <div className="fill" style={{ width: '60%' }}></div>
-        </div>
-        <small>3 of 5 sessions completed</small>
-      </section>
+        {/* Cards */}
+        <section className="home__cards">
+          <div className="card">
+            <h3>Progress Graphs</h3>
+            <p>Visualize your weekly improvements.</p>
+          </div>
+          <div className="card">
+            <h3>Workout Library</h3>
+            <p>Browse and inject workouts into your plan.</p>
+          </div>
+        </section>
+      </main>
 
-      {/* Install button */}
-      <footer className="home-footer">
-        <InstallButton />
+      {/* Footer */}
+      <footer className="home__footer">
+        <p>
+          Built with ❤️ by Wayne. <a href="#">Privacy Policy</a>
+        </p>
       </footer>
     </div>
   );
-}
+};
+
+export default Home;
