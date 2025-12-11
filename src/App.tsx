@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import Home from './screens/Home'; // ✅ use this one
-import Build from './screens/Build';
+import ProgramBuilder from './screens/ProgramBuilder';
 import ProgramEditor from './screens/ProgramEditor';
 import DayEditor from './screens/DayEditor';
 import Session from './screens/Session';
@@ -13,8 +13,8 @@ function Tabs() {
       <NavLink to="/" end className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
         🏠 Home
       </NavLink>
-      <NavLink to="/build" className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
-        🏋️ Build
+      <NavLink to="/programbuilder" className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
+        🏋️ ProgramBuilder
       </NavLink>
       <NavLink to="/train" className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
         ▶️ Train
@@ -40,7 +40,7 @@ export default function App() {
           <main>
             <Routes>
               <Route path="/" element={<Home />} /> {/* ✅ now uses imported Home */}
-              <Route path="/build" element={<Build />} />
+              <Route path="/programbuilder" element={<ProgramBuilder />} />
               <Route path="/program/:id" element={<ProgramEditor />} />
               <Route path="/program/:id/week/:week/day/:day" element={<DayEditor />} />
               <Route path="/session/:programId/:week/:day" element={<Session />} />
